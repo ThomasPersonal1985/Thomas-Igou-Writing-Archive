@@ -1778,7 +1778,8 @@
     "Source files": "collaboration/Shrink it Master Copy.fdx; collaboration/Shrink it - OLD VERSION.fdx; collaboration/Shrink it.pdf; collaboration/Shrink it - script.pdf; collaboration/Shrink it - script - extract.pdf",
     "Inventory note": "One collaborative play; full 42-page PDF ends with “THE END”; older FDX and partial extract are grouped as versions. The first co-author credit differs between FDX and PDF (Revel / Velasco), so confirm the byline before publication.",
     "Classification confidence": "Medium",
-    "Category": "Play"
+    "Category": "Play",
+    "Co-author": "Giuseppe Velasco"
   },
   {
     "Title": "Ryanair Play (working title)",
@@ -1791,7 +1792,8 @@
     "Source files": "collaboration/ryanairplay.fdx; collaboration/Ryanair/RyanAirSpoof.docx; collaboration/Ryanair/PAYANAIR_notes.doc",
     "Inventory note": "The FDX is a peanut-announcement sketch; other files contain episode ideas and dialogue fragments.",
     "Classification confidence": "High",
-    "Category": "Play"
+    "Category": "Play",
+    "Co-author": "Giuseppe Velasco"
   },
   {
     "Title": "Shrink It — song lyrics",

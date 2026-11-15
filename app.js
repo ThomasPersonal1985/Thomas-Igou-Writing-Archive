@@ -92,6 +92,9 @@ function openWork(w, updateHistory=true){
   previousFocus=document.activeElement;
   document.querySelector('#reader-form').textContent=categoryOf(w);
   document.querySelector('#reader-title').textContent=w.Title;
+  const credit=document.querySelector('#reader-credit');
+  credit.textContent=w['Co-author']?`Co-written with ${w['Co-author']}`:'';
+  credit.hidden=!w['Co-author'];
   const status=document.querySelector('#reader-status');
   status.textContent=w['Completion status'];
   status.classList.toggle('incomplete',w['Completion status']==='Incomplete');
