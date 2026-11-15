@@ -32,3 +32,6 @@ dialog{max-height:calc(100% - 32px);overflow:auto;width:min(700px,calc(100% - 32
 .intro{min-height:430px;padding:54px 13.8% 52px}.intro-side{margin-top:0}.intro-index{bottom:20px}
 @media(max-width:800px){.intro{min-height:400px;padding:48px 8%}}
 @media(max-width:600px){.intro{min-height:390px;padding:48px 8% 52px}.intro-side{margin:26px 0 0}}
+.intro{min-height:360px;padding:34px 13.8% 38px}.intro h1{font-size:clamp(64px,8.5vw,116px)}.intro-index{bottom:14px}
+@media(max-width:800px){.intro{min-height:370px;padding:36px 8%}.intro h1{font-size:clamp(64px,9vw,108px)}}
+@media(max-width:600px){.intro{min-height:0;padding:42px 8% 34px}.intro h1{font-size:76px}.intro-side{margin:20px 0 0}.intro-index{bottom:10px}}
