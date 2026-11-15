@@ -1,0 +1,77 @@
+backend:
+  name: turbo-github
+  turbo_site_id: 2967ec1d-0bf9-44d8-8f1f-7f8429cd39c1
+  branch: main
+
+media_folder: assets
+public_folder: /assets
+
+collections:
+  - name: archive
+    label: Writing archive
+    files:
+      - name: works
+        label: Works
+        file: cms-archive.json
+        fields:
+          - label: Works
+            name: works
+            widget: list
+            summary: "{{fields.Title}} · {{fields.Form}}"
+            collapsed: true
+            fields:
+              - { label: Title, name: Title, widget: string }
+              - label: Form
+                name: Form
+                widget: select
+                options:
+                  - Short story
+                  - Poem
+                  - Novel
+                  - Stage play
+                  - Stage sketch
+                  - Screenplay
+                  - Song / lyrics
+                  - Essay / prose fragment
+                  - Prose fiction — form unclear
+              - label: Site category
+                name: Category
+                widget: select
+                options:
+                  - Short story
+                  - Poetry
+                  - Novel
+                  - Play
+                  - Script
+              - label: Completion status
+                name: Completion status
+                widget: select
+                options:
+                  - Complete
+                  - Incomplete
+              - label: Subject / mood tags
+                name: Subject / mood tags
+                widget: string
+                hint: Separate multiple tags with semicolons.
+              - label: Primary mood
+                name: Primary mood
+                widget: select
+                options:
+                  - Anxious / tense
+                  - Comic / satirical
+                  - Dark / unsettling
+                  - Defiant / hopeful
+                  - Melancholy / grieving
+                  - Reflective / philosophical
+                  - Tender / yearning
+              - { label: Co-author, name: Co-author, widget: string, required: false }
+              - { label: Form detail, name: Form detail, widget: string, required: false }
+              - { label: Status assessment, name: Status assessment, widget: string, required: false }
+              - { label: Source files, name: Source files, widget: string, required: false }
+              - { label: Inventory note, name: Inventory note, widget: string, required: false }
+              - { label: Classification confidence, name: Classification confidence, widget: string, required: false }
+              - label: Full text
+                name: text
+                widget: text
+                required: false
+                hint: Edit the work’s text here. Preserve line breaks.
