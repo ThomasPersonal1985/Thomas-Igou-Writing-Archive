@@ -23,7 +23,7 @@ function filtered(){
 }
 function renderCategoryNav(){
   const counts=Object.fromEntries(categories.map(category=>[category,inventory.filter(w=>categoryOf(w)===category).length]));
-  categoryNav.innerHTML=categories.map(category=>`<button class="category-card ${activeCategory===category?'selected':''}" type="button" data-category="${esc(category)}" aria-pressed="${activeCategory===category}"><span class="category-number">${String(categories.indexOf(category)+1).padStart(2,'0')}</span><span class="category-name">${esc(category)}</span><span class="category-count">${String(counts[category]).padStart(2,'0')} works</span><span class="category-arrow" aria-hidden="true">↗</span></button>`).join('');
+  categoryNav.innerHTML=categories.map(category=>`<button class="category-card ${activeCategory===category?'selected':''}" type="button" data-category="${esc(category)}" aria-pressed="${activeCategory===category}"><span class="category-number">${String(categories.indexOf(category)+1).padStart(2,'0')}</span><span class="category-name">${esc(category)}</span><span class="category-count">${String(counts[category]).padStart(2,'0')} ${counts[category]===1?'work':'works'}</span><span class="category-arrow" aria-hidden="true">↗</span></button>`).join('');
 }
 function openWork(w, updateHistory=true){
   previousFocus=document.activeElement;
