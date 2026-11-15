@@ -23,7 +23,7 @@ function showWork(w){
   document.querySelector('#dialog-meta').textContent=`${w['Completion status']} · ${w['Primary mood'] || 'Mood not tagged'}`;
   document.querySelector('#dialog-tags').textContent=tags(w).join('  ·  ');
   document.querySelector('#dialog-note').textContent=w['Inventory note'] || w['Form detail'] || 'A work in the archive.';
-  const full=fullText[w.Title];
+  const full=fullText[`${w.Title}||${w.Form}`];
   document.querySelector('#dialog-body').textContent=full?.text || '';
   document.querySelector('#dialog-foot').textContent=full ? `Full text · Source: ${full.source}` : 'Full text is not available in the imported source files yet.';
   dialog.showModal();
