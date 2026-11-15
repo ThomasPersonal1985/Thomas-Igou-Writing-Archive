@@ -123,8 +123,20 @@ function closeReader(updateHistory=true){
   reader.hidden=true;
   reader.setAttribute('aria-hidden','true');
   document.body.classList.remove('reading');
-  if(updateHistory&&location.hash.startsWith('#read/'))history.back();
-  else if(previousFocus?.focus)previousFocus.focus();
+  if(updateHistory&&location.hash.startsWith('#read/')){
+    history.replaceState({},'', '#collection');
+    document.querySelector('#collection').scrollIntoView({behavior:'smooth',block:'start'});
+    document.querySelector('#collection-title').focus({preventScroll:true});
+  }else if(previousFocus?.focus)previousFocus.focus();
+}
+function goHomeFromReader(){
+  if(reader.hidden)return;
+  reader.hidden=true;
+  reader.setAttribute('aria-hidden','true');
+  document.body.classList.remove('reading');
+  history.replaceState({},'', '#top');
+  window.scrollTo({top:0,behavior:'smooth'});
+  document.querySelector('#top').focus({preventScroll:true});
 }
 function render(){
   const items=filtered();
@@ -152,6 +164,7 @@ categoryNav.addEventListener('click',e=>{const button=e.target.closest('[data-ca
 document.querySelector('#reset').addEventListener('click',()=>{searchInput.value='';statusSelect.value='';moodSelect.value='';activeCategory='';renderCategoryNav();render()});
 worksRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]');if(row){const work=inventory.find(w=>w.Title===row.dataset.work&&w.Form===row.dataset.form);if(work)openWork(work)}});
 document.querySelector('#reader-back').addEventListener('click',()=>closeReader());
+document.querySelector('#reader-home').addEventListener('click',e=>{e.preventDefault();goHomeFromReader()});
 relatedRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]');if(!row)return;const work=inventory.find(w=>w.Title===row.dataset.work&&w.Form===row.dataset.form);if(work)openWork(work)});
 ratingRoot.addEventListener('click',e=>{const button=e.target.closest('[data-score]');if(button)submitRating(Number(button.dataset.score))});
 ratingRoot.addEventListener('pointerover',e=>{const button=e.target.closest('[data-score]');if(button)paintRating(Number(button.dataset.score))});
