@@ -35,3 +35,6 @@ dialog{max-height:calc(100% - 32px);overflow:auto;width:min(700px,calc(100% - 32
 .intro{min-height:360px;padding:34px 13.8% 38px}.intro h1{font-size:clamp(64px,8.5vw,116px)}.intro-index{bottom:14px}
 @media(max-width:800px){.intro{min-height:370px;padding:36px 8%}.intro h1{font-size:clamp(64px,9vw,108px)}}
 @media(max-width:600px){.intro{min-height:0;padding:42px 8% 34px}.intro h1{font-size:76px}.intro-side{margin:20px 0 0}.intro-index{bottom:10px}}
+.start-here{padding:26px 8.5% 20px;background:var(--green);color:var(--white)}.start-heading{padding-bottom:8px}.start-heading .eyebrow,.start-heading h2{color:var(--white)}.start-work{min-height:88px;padding:12px 24px 10px 2px;color:var(--white);border-bottom-color:#ffffff55}.start-form,.start-mood{color:#d7dfd2}.start-work:hover .start-name{color:#e2eadc}.start-work .row-arrow{color:#ffffffb3}
+@media(max-width:800px){.start-here{padding:22px 7% 18px}.start-work{min-height:84px}}
+@media(max-width:600px){.start-here{padding:20px 7% 18px}.start-work{min-height:80px;padding:10px 20px 8px 2px}}

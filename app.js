@@ -112,7 +112,7 @@ function renderReadingText(text, isNovel){
 }
 function applyReaderPreferences(){
   document.querySelector('#reader-body').style.setProperty('--reader-size',`${readerTextSize}px`);
-  document.querySelector('#reader-article').classList.toggle('wide-reading',wideReading);
+  document.querySelector('.reader-article').classList.toggle('wide-reading',wideReading);
   document.querySelector('#reader-layer').classList.toggle('night-reading',localStorage.getItem('tiwa-reader-theme')==='dark');
   document.querySelector('#reader-layer').classList.toggle('focus-reading',localStorage.getItem('tiwa-reader-focus')==='on');
   document.querySelector('#width-toggle').setAttribute('aria-pressed',String(wideReading));
