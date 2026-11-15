@@ -4,6 +4,7 @@ const moodSelect = document.querySelector('#mood');
 const worksRoot = document.querySelector('#works');
 const dialog = document.querySelector('#work-dialog');
 let inventory = [];
+let fullText = {};
 
 const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const formOrder = ['Short story','Poem','Novel','Stage play','Stage sketch','Screenplay','Song / lyrics'];
@@ -22,6 +23,9 @@ function showWork(w){
   document.querySelector('#dialog-meta').textContent=`${w['Completion status']} · ${w['Primary mood'] || 'Mood not tagged'}`;
   document.querySelector('#dialog-tags').textContent=tags(w).join('  ·  ');
   document.querySelector('#dialog-note').textContent=w['Inventory note'] || w['Form detail'] || 'A work in the archive.';
+  const full=fullText[w.Title];
+  document.querySelector('#dialog-body').textContent=full?.text || '';
+  document.querySelector('#dialog-foot').textContent=full ? `Full text · Source: ${full.source}` : 'Full text is not available in the imported source files yet.';
   dialog.showModal();
 }
 function render(){
@@ -35,8 +39,11 @@ function render(){
   if(!items.length){worksRoot.innerHTML='<p class="empty">Nothing in the catalogue matches those filters.</p>';return}
   worksRoot.innerHTML=sorted.map(([form,rows])=>`<section class="form-section"><div class="form-heading"><h3>${esc(form)}</h3><span>${String(rows.length).padStart(2,'0')} ${rows.length===1?'work':'works'}</span></div>${rows.map(w=>`<article class="work-row" tabindex="0" role="button" data-work="${esc(w.Title)}" aria-label="Open ${esc(w.Title)}"><span><span class="work-title">${esc(w.Title)}</span>${w['Form detail']&&w['Form detail']!==w.Form?`<span class="work-sub">${esc(w['Form detail'])}</span>`:''}</span><span class="status ${w['Completion status']==='Incomplete'?'incomplete':''}">${esc(w['Completion status'])}</span><span class="row-arrow" aria-hidden="true">↗</span></article>`).join('')}</section>`).join('');
 }
-fetch('archive.json').then(r=>{if(!r.ok)throw new Error('Could not load archive');return r.json()}).then(rows=>{
-  inventory=rows;
+Promise.all([fetch('archive.json'),fetch('writing-content.json')]).then(async ([catalogue,content])=>{
+  if(!catalogue.ok||!content.ok)throw new Error('Could not load archive files');
+  return [await catalogue.json(),await content.json()];
+}).then(([rows,writing])=>{
+  inventory=rows; fullText=writing;
   const options=[...new Set(rows.flatMap(tags))].sort((a,b)=>a.localeCompare(b));
   moodSelect.insertAdjacentHTML('beforeend',options.map(tag=>`<option value="${esc(tag)}">${esc(tag)}</option>`).join(''));
   render();
