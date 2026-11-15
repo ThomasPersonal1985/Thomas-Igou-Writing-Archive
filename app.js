@@ -9,6 +9,7 @@ const categoryMap = {'Short story':'Short story','Poem':'Poetry','Novel':'Novel'
 const relatedRoot = document.querySelector('#related-works');
 const ratingRoot = document.querySelector('#rating-control');
 let activeRatingWorkId = '';
+let activeUserRating = 0;
 let fallbackVoterId = '';
 let inventory = [];
 let fullText = {};
@@ -35,11 +36,15 @@ function getVoterId(){
 }
 function showRating(data){
   if(data.work_id!==activeRatingWorkId)return;
+  activeUserRating=Number(data.your_rating||0);
   document.querySelector('#rating-summary').textContent=data.count?`${Number(data.average).toFixed(1)} / 5 · ${data.count} ${data.count===1?'rating':'ratings'}`:'No ratings yet';
+  paintRating(activeUserRating);
+}
+function paintRating(score){
   ratingRoot.querySelectorAll('[data-score]').forEach(button=>{
-    const selected=Number(button.dataset.score)<=Number(data.your_rating||0);
+    const selected=Number(button.dataset.score)<=score;
     button.classList.toggle('selected',selected);
-    button.setAttribute('aria-pressed',String(Number(button.dataset.score)===Number(data.your_rating||0)));
+    button.setAttribute('aria-pressed',String(Number(button.dataset.score)===activeUserRating));
   });
 }
 async function loadRating(workId){
@@ -47,6 +52,7 @@ async function loadRating(workId){
   const summary=document.querySelector('#rating-summary');
   const message=document.querySelector('#rating-message');
   summary.textContent='Loading ratings…';message.textContent='';
+  activeUserRating=0;
   ratingRoot.querySelectorAll('button').forEach(button=>{button.disabled=false;button.classList.remove('selected');button.setAttribute('aria-pressed','false')});
   try{
     const query=new URLSearchParams({work_id:workId,voter_id:getVoterId()});
@@ -148,5 +154,9 @@ worksRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]')
 document.querySelector('#reader-back').addEventListener('click',()=>closeReader());
 relatedRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]');if(!row)return;const work=inventory.find(w=>w.Title===row.dataset.work&&w.Form===row.dataset.form);if(work)openWork(work)});
 ratingRoot.addEventListener('click',e=>{const button=e.target.closest('[data-score]');if(button)submitRating(Number(button.dataset.score))});
+ratingRoot.addEventListener('pointerover',e=>{const button=e.target.closest('[data-score]');if(button)paintRating(Number(button.dataset.score))});
+ratingRoot.addEventListener('pointerleave',()=>paintRating(activeUserRating));
+ratingRoot.addEventListener('focusin',e=>{const button=e.target.closest('[data-score]');if(button)paintRating(Number(button.dataset.score))});
+ratingRoot.addEventListener('focusout',()=>paintRating(activeUserRating));
 window.addEventListener('popstate',()=>{const match=workFromHash();if(match)openWork(match,false);else closeReader(false)});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();searchInput.focus()}if(e.key==='Escape'&&!reader.hidden)closeReader()});
