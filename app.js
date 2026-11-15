@@ -6,6 +6,7 @@ const categoryNav = document.querySelector('#category-nav');
 const reader = document.querySelector('#reader-layer');
 const categories = ['Short story','Poetry','Novel','Play','Script'];
 const categoryMap = {'Short story':'Short story','Poem':'Poetry','Novel':'Novel','Stage play':'Play','Stage sketch':'Play','Screenplay':'Script','Song / lyrics':'Script','Prose fiction — form unclear':'Short story','Essay / prose fragment':'Short story'};
+const relatedRoot = document.querySelector('#related-works');
 let inventory = [];
 let fullText = {};
 let activeCategory = '';
@@ -14,6 +15,14 @@ let previousFocus = null;
 const esc = value => String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
 const categoryOf = item => item.Category || categoryMap[item.Form] || 'Short story';
 const tags = item => String(item['Subject / mood tags'] || '').split(';').map(s => s.trim()).filter(Boolean);
+function relatedWorks(work){
+  const ownTags=new Set(tags(work));
+  return inventory.filter(candidate=>candidate!==work).map(candidate=>{
+    const shared=tags(candidate).filter(tag=>ownTags.has(tag)).length;
+    const score=shared*3+(candidate['Primary mood']===work['Primary mood']?2:0)+(categoryOf(candidate)===categoryOf(work)?1.5:0)+(candidate.Form===work.Form?1:0);
+    return {work:candidate,score};
+  }).sort((a,b)=>b.score-a.score||a.work.Title.localeCompare(b.work.Title)).slice(0,Math.min(3,inventory.length-1)).map(result=>result.work);
+}
 function filtered(){
   const q=searchInput.value.trim().toLocaleLowerCase();
   return inventory.filter(w=>{
@@ -37,6 +46,7 @@ function openWork(w, updateHistory=true){
   document.querySelector('#reader-body').textContent=full?.text || '';
   document.querySelector('#reader-body').hidden=!full;
   document.querySelector('#reader-unavailable').hidden=!!full;
+  relatedRoot.innerHTML=relatedWorks(w).map(item=>`<button class="related-row" type="button" data-form="${esc(item.Form)}" data-work="${esc(item.Title)}"><span class="related-name">${esc(item.Title)}</span><span class="related-meta"><span>${esc(categoryOf(item))}</span><span>${esc(item['Completion status'])}</span></span><span class="related-mood">${esc(item['Primary mood']||tags(item).join(' · '))}</span><span class="row-arrow" aria-hidden="true">↗</span></button>`).join('');
   reader.dataset.category=categoryOf(w);
   reader.dataset.form=w.Form;
   reader.hidden=false;
@@ -87,5 +97,6 @@ categoryNav.addEventListener('click',e=>{const button=e.target.closest('[data-ca
 document.querySelector('#reset').addEventListener('click',()=>{searchInput.value='';statusSelect.value='';moodSelect.value='';activeCategory='';renderCategoryNav();render()});
 worksRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]');if(row){const work=inventory.find(w=>w.Title===row.dataset.work&&w.Form===row.dataset.form);if(work)openWork(work)}});
 document.querySelector('#reader-back').addEventListener('click',()=>closeReader());
+relatedRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]');if(!row)return;const work=inventory.find(w=>w.Title===row.dataset.work&&w.Form===row.dataset.form);if(work)openWork(work)});
 window.addEventListener('popstate',()=>{const match=workFromHash();if(match)openWork(match,false);else closeReader(false)});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();searchInput.focus()}if(e.key==='Escape'&&!reader.hidden)closeReader()});
