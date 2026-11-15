@@ -150,11 +150,11 @@ function render(){
   if(!items.length){worksRoot.innerHTML='<p class="empty">Nothing in the catalogue matches those filters.</p>';return}
   worksRoot.innerHTML=sorted.map(([category,rows])=>`<section class="form-section"><div class="form-heading"><h3>${esc(category)}</h3><span>${String(rows.length).padStart(2,'0')} ${rows.length===1?'work':'works'}</span></div>${rows.map(w=>`<button class="work-row" type="button" data-form="${esc(w.Form)}" data-work="${esc(w.Title)}"><span class="work-title">${esc(w.Title)}</span><span class="work-labels"><span class="status ${w['Completion status']==='Incomplete'?'incomplete':''}">${esc(w['Completion status'])}</span><span class="work-mood">${esc(w['Primary mood'] || tags(w).join(' · '))}</span></span><span class="row-arrow" aria-hidden="true">↗</span></button>`).join('')}</section>`).join('');
 }
-Promise.all([fetch('archive.json'),fetch('writing-content.json')]).then(async ([catalogue,content])=>{
-  if(!catalogue.ok||!content.ok)throw new Error('Could not load archive files');
-  return [await catalogue.json(),await content.json()];
-}).then(([rows,writing])=>{
-  inventory=rows; fullText=writing;
+fetch('cms-archive.json').then(async catalogue=>{
+  if(!catalogue.ok)throw new Error('Could not load archive file');
+  return await catalogue.json();
+}).then(({works:rows})=>{
+  inventory=rows; fullText=Object.fromEntries(rows.map(w=>[`${w.Title}||${w.Form}`,{text:w.text||''}]));
   renderCategoryNav();
   const options=[...new Set(rows.flatMap(tags))].sort((a,b)=>a.localeCompare(b));
   moodSelect.insertAdjacentHTML('beforeend',options.map(tag=>`<option value="${esc(tag)}">${esc(tag)}</option>`).join(''));
