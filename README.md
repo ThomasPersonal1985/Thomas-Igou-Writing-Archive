@@ -1,14 +1,14 @@
 # Thomas Igou Writing Archive
 
-A responsive reading-room archive with form-led browsing, title and subject search, completion filtering, and full-text reading views.
+A responsive reading-room archive with form-led browsing, title and subject search, completion filtering, and a full-page reading layer.
 
 ## Files
 
-- `archive.json` contains the catalogue records and tags for 140 works.
-- `writing-content.json` contains readable text for 137 works, including stories, poems split from the collections, the novel, play, screenplay, and song.
-- Three poems remain catalogued without full text because their only supplied copies are legacy WPS files that could not be converted: *Breaking News*, *Bathroom. Breakdown. Pause:*, and *Sometimes…*.
+- `archive.json` contains the catalogue records and tags for 139 works.
+- `writing-content.json` contains readable text for all 139 catalogue entries.
+- `thomas-igou.jpg` is the author portrait shown in the About section.
 
-Original documents were not changed. Imported text is served directly by the public site.
+The catalogue omits “Bathroom. Breakdown. Pause:” at the author's request. Original writing documents were not changed.
 
 ## Preview locally
 

@@ -37,7 +37,7 @@
     <section class="collection" id="collection" aria-labelledby="collection-title">
       <div class="section-heading">
         <div><p class="eyebrow">Browse the archive</p><h2 id="collection-title">The collection</h2></div>
-        <p class="collection-count"><strong id="result-count">140</strong> works<br><span>in the catalogue</span></p>
+      <p class="collection-count"><strong id="result-count">139</strong> works<br><span>in the catalogue</span></p>
       </div>
       <div class="browse-layout">
         <aside class="filters" aria-label="Collection filters">
@@ -53,14 +53,17 @@
     </section>
 
     <section class="about" id="about" aria-labelledby="about-title">
-      <div class="about-label"><span>About the author</span><span>02 / 02</span></div>
-      <div class="about-copy"><p class="eyebrow">A note on this archive</p><h2 id="about-title">Writing across<br><em>forms and years.</em></h2><p>This archive gathers Thomas Igou’s writing across short fiction, poetry, theatre, screen and longer work. It is both a reading room and a record of the work in progress.</p><p>The catalogue is being assembled from drafts and collections. Titles and status reflect the current inventory and may evolve as the archive grows.</p></div>
+      <div class="about-label"><img class="author-photo" src="thomas-igou.jpg" alt="Thomas Igou by a lake"><span>About the author · 02 / 02</span></div>
+      <div class="about-copy"><p class="eyebrow">A note on this archive</p><h2 id="about-title">About<br><em>Thomas Igou.</em></h2><p class="about-placeholder">Thomas Igou is a French writer living in Stockholm. He began writing while living in New York. His personal life inspires his work, especially short stories, his favourite form, while he continues to explore other styles. His influences include Kurt Vonnegut, Stephen King, J.R.R. Tolkien and Jay McInerney. He is a father of five.</p></div>
       <div class="about-mark" aria-hidden="true">TI</div>
     </section>
   </main>
   <footer><a href="#top">Thomas Igou Writing Archive <span>↑</span></a><span>Made for reading, and for finding your way back.</span><span>© Thomas Igou</span></footer>
 
-  <dialog id="work-dialog" aria-labelledby="dialog-title"><button class="dialog-close" aria-label="Close details" type="button">×</button><p class="eyebrow" id="dialog-form"></p><h2 id="dialog-title"></h2><div class="dialog-meta" id="dialog-meta"></div><p class="dialog-tags" id="dialog-tags"></p><p class="dialog-note" id="dialog-note"></p><div class="dialog-body" id="dialog-body"></div><p class="dialog-foot" id="dialog-foot"></p></dialog>
+  <section class="reader-layer" id="reader-layer" aria-label="Reading view" aria-hidden="true" hidden>
+    <header class="reader-header"><button class="reader-back" id="reader-back" type="button"><span aria-hidden="true">←</span> Back to the collection</button><a class="wordmark" href="#top">TI<span> / </span>WA</a></header>
+    <article class="reader-article"><p class="eyebrow" id="reader-form"></p><h2 id="reader-title"></h2><div class="reader-meta"><span class="status" id="reader-status"></span><span class="reader-tags" id="reader-tags"></span></div><div class="reader-body" id="reader-body"></div><p class="reader-unavailable" id="reader-unavailable" hidden>Full text is not available in the archive yet.</p></article>
+  </section>
   <script src="app.js"></script>
 </body>
 </html>
