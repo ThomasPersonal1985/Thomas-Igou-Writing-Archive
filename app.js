@@ -7,6 +7,9 @@ const reader = document.querySelector('#reader-layer');
 const categories = ['Short story','Poetry','Novel','Play','Script'];
 const categoryMap = {'Short story':'Short story','Poem':'Poetry','Novel':'Novel','Stage play':'Play','Stage sketch':'Play','Screenplay':'Script','Song / lyrics':'Script','Prose fiction — form unclear':'Short story','Essay / prose fragment':'Short story'};
 const relatedRoot = document.querySelector('#related-works');
+const ratingRoot = document.querySelector('#rating-control');
+let activeRatingWorkId = '';
+let fallbackVoterId = '';
 let inventory = [];
 let fullText = {};
 let activeCategory = '';
@@ -22,6 +25,51 @@ function relatedWorks(work){
     const score=shared*3+(candidate['Primary mood']===work['Primary mood']?2:0)+(categoryOf(candidate)===categoryOf(work)?1.5:0)+(candidate.Form===work.Form?1:0);
     return {work:candidate,score};
   }).sort((a,b)=>b.score-a.score||a.work.Title.localeCompare(b.work.Title)).slice(0,Math.min(3,inventory.length-1)).map(result=>result.work);
+}
+function getVoterId(){
+  try{
+    let id=localStorage.getItem('tiwa-rating-voter');
+    if(!id){id=crypto.randomUUID();localStorage.setItem('tiwa-rating-voter',id)}
+    return id;
+  }catch(_){if(!fallbackVoterId)fallbackVoterId=crypto.randomUUID();return fallbackVoterId}
+}
+function showRating(data){
+  if(data.work_id!==activeRatingWorkId)return;
+  document.querySelector('#rating-summary').textContent=data.count?`${Number(data.average).toFixed(1)} / 5 · ${data.count} ${data.count===1?'rating':'ratings'}`:'No ratings yet';
+  ratingRoot.querySelectorAll('[data-score]').forEach(button=>{
+    const selected=Number(button.dataset.score)<=Number(data.your_rating||0);
+    button.classList.toggle('selected',selected);
+    button.setAttribute('aria-pressed',String(Number(button.dataset.score)===Number(data.your_rating||0)));
+  });
+}
+async function loadRating(workId){
+  activeRatingWorkId=workId;
+  const summary=document.querySelector('#rating-summary');
+  const message=document.querySelector('#rating-message');
+  summary.textContent='Loading ratings…';message.textContent='';
+  ratingRoot.querySelectorAll('button').forEach(button=>{button.disabled=false;button.classList.remove('selected');button.setAttribute('aria-pressed','false')});
+  try{
+    const query=new URLSearchParams({work_id:workId,voter_id:getVoterId()});
+    const response=await fetch(`/api/ratings?${query}`,{cache:'no-store'});
+    if(!response.ok)throw new Error('Ratings unavailable');
+    showRating(await response.json());
+  }catch(_){if(activeRatingWorkId===workId){summary.textContent='Ratings are temporarily unavailable';message.textContent='Please try again later.'}}
+}
+async function submitRating(score){
+  const workId=activeRatingWorkId;
+  if(!workId)return;
+  const buttons=[...ratingRoot.querySelectorAll('button')];
+  buttons.forEach(button=>button.disabled=true);
+  document.querySelector('#rating-message').textContent='Saving your rating…';
+  try{
+    const response=await fetch('/api/ratings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({work_id:workId,voter_id:getVoterId(),score})});
+    if(!response.ok)throw new Error('Rating could not be saved');
+    const data=await response.json();
+    if(workId!==activeRatingWorkId)return;
+    showRating(data);
+    document.querySelector('#rating-message').textContent='Your rating is saved. You can change it anytime.';
+  }catch(_){if(workId===activeRatingWorkId)document.querySelector('#rating-message').textContent='Could not save your rating. Please try again.'}
+  finally{if(workId===activeRatingWorkId)buttons.forEach(button=>button.disabled=false)}
 }
 function filtered(){
   const q=searchInput.value.trim().toLocaleLowerCase();
@@ -47,6 +95,7 @@ function openWork(w, updateHistory=true){
   document.querySelector('#reader-body').hidden=!full;
   document.querySelector('#reader-unavailable').hidden=!!full;
   relatedRoot.innerHTML=relatedWorks(w).map(item=>`<button class="related-row" type="button" data-form="${esc(item.Form)}" data-work="${esc(item.Title)}"><span class="related-name">${esc(item.Title)}</span><span class="related-meta"><span>${esc(categoryOf(item))}</span><span>${esc(item['Completion status'])}</span></span><span class="related-mood">${esc(item['Primary mood']||tags(item).join(' · '))}</span><span class="row-arrow" aria-hidden="true">↗</span></button>`).join('');
+  loadRating(`${w.Title}||${w.Form}`);
   reader.dataset.category=categoryOf(w);
   reader.dataset.form=w.Form;
   reader.hidden=false;
@@ -98,5 +147,6 @@ document.querySelector('#reset').addEventListener('click',()=>{searchInput.value
 worksRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]');if(row){const work=inventory.find(w=>w.Title===row.dataset.work&&w.Form===row.dataset.form);if(work)openWork(work)}});
 document.querySelector('#reader-back').addEventListener('click',()=>closeReader());
 relatedRoot.addEventListener('click',e=>{const row=e.target.closest('[data-work]');if(!row)return;const work=inventory.find(w=>w.Title===row.dataset.work&&w.Form===row.dataset.form);if(work)openWork(work)});
+ratingRoot.addEventListener('click',e=>{const button=e.target.closest('[data-score]');if(button)submitRating(Number(button.dataset.score))});
 window.addEventListener('popstate',()=>{const match=workFromHash();if(match)openWork(match,false);else closeReader(false)});
 document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==='k'){e.preventDefault();searchInput.focus()}if(e.key==='Escape'&&!reader.hidden)closeReader()});
